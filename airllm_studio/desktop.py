@@ -100,16 +100,22 @@ class Bridge:
     def unlock_with_license_key(self, code: str) -> dict:
         return self.s.unlock_with_license_key(code)
 
-    def open_legal(self, kind: str) -> dict:
-        import webbrowser
+    def dev_unlock(self) -> dict:
+        return self.s.dev_unlock()
 
+    def open_legal(self, kind: str) -> dict:
+        """Return a file:// URL for in-app navigation (no external browser)."""
         from airllm_studio.billing import legal_page_path, legal_page_url
 
-        path = legal_page_path("privacy" if kind == "privacy" else "terms")
+        which = "privacy" if kind == "privacy" else "terms"
+        path = legal_page_path(which)
         if not path.is_file():
             return {"ok": False, "error": f"missing legal page: {path}"}
-        webbrowser.open(legal_page_url("privacy" if kind == "privacy" else "terms"))
-        return {"ok": True, "url": legal_page_url("privacy" if kind == "privacy" else "terms")}
+        return {
+            "ok": True,
+            "href": f"legal/{'privacy' if which == 'privacy' else 'terms'}.html",
+            "url": legal_page_url(which),
+        }
 
 
 def run_desktop() -> None:

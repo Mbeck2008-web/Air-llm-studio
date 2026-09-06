@@ -29,8 +29,12 @@ def _write_executable(path: Path, text: str) -> None:
     path.chmod(mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 
-def build_app(dest: Path | None = None) -> Path:
-    """Create Contents/MacOS launcher + embed airllm_studio (no sibling .venv required)."""
+def build_app(dest: Path | None = None, *, release: bool = False) -> Path:
+    """Create Contents/MacOS launcher + embed airllm_studio (no sibling .venv required).
+
+    When release=True, the launcher exports AIRLLM_STUDIO_RELEASE=1 so Dev Unlock
+    is disabled in customer / MAS builds.
+    """
     dest = dest or default_dist_app()
     if dest.exists():
         shutil.rmtree(dest)
@@ -44,6 +48,9 @@ def build_app(dest: Path | None = None) -> Path:
     shutil.copy2(info_plist_path(), contents / "Info.plist")
     shutil.copy2(entitlements_path(), resources / "AirLLMStudio.entitlements")
     shutil.copy2(signing_config_path(), resources / "signing.json")
+    storekit = macos_asset_dir() / "Products.storekit"
+    if storekit.is_file():
+        shutil.copy2(storekit, resources / "Products.storekit")
     pkg = Path(__file__).resolve().parent
     shutil.copytree(pkg, app_py / "airllm_studio", dirs_exist_ok=True)
 
@@ -60,6 +67,9 @@ def build_app(dest: Path | None = None) -> Path:
             extra.append(str(Path(p).resolve()))
     (resources / "site-packages.txt").write_text("\n".join(extra) + "\n", encoding="utf-8")
 
+    release_export = (
+        "export AIRLLM_STUDIO_RELEASE=1\n" if release else ""
+    )
     launcher = macos / APP_EXECUTABLE
     _write_executable(
         launcher,
@@ -75,7 +85,7 @@ if [[ -f "$RES/site-packages.txt" ]]; then
 fi
 export PYTHONPATH="$PP${{PYTHONPATH:+:$PYTHONPATH}}"
 export AIRLLM_STUDIO_BUNDLE=1
-PY=""
+{release_export}PY=""
 if [[ -x "$RES/python/bin/python3" ]]; then
   PY="$RES/python/bin/python3"
 elif [[ -x "{py}" ]]; then

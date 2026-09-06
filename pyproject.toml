@@ -9,7 +9,7 @@ description = "Native macOS desktop app for running large LLMs locally with AirL
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "Apache-2.0" }
-authors = [{ name = "AirLLM Studio" }]
+authors = [{ name = "Michael Beck" }]
 dependencies = [
   "pywebview>=5.0",
   "customtkinter>=5.2.0,<6",
@@ -21,7 +21,7 @@ dependencies = [
 ]
 
 [tool.setuptools.package-data]
-airllm_studio = ["web/*", "web/legal/*", "macos/*"]
+airllm_studio = ["web/*", "web/legal/*", "macos/*", "macos/*.storekit"]
 
 [project.optional-dependencies]
 airllm = [

@@ -226,16 +226,39 @@
       grid.innerHTML = (b.products || [])
         .map((p) => {
           const period = p.period_plain || "";
-          const auto = p.auto_renew ? `<p class="sku-renew">${esc(period)}</p>` : `<p class="sku-renew">${esc(period)}</p>`;
+          const auto = `<p class="sku-renew">${esc(period)}</p>`;
           return `<article class="sku-card">
             <h3>${esc(p.display_name)}</h3>
             <div class="sku-price">${esc(p.price_display)} <span>USD</span></div>
             <p class="sku-desc">${esc(p.description || "")}</p>
             ${auto}
-            <button class="btn-send" type="button" data-sku="${esc(p.product_id)}">Buy</button>
+            <button class="btn-send" type="button" data-sku="${esc(p.product_id)}" ${b.entitled ? "disabled" : ""}>Buy</button>
           </article>`;
         })
         .join("");
+    }
+    const manage = $("pro-manage");
+    if (manage) {
+      manage.textContent = b.manage_subscription_copy
+        || "Manage or cancel an auto-renewing subscription in System Settings → Apple ID → Subscriptions.";
+      manage.hidden = !b.has_subscription;
+    }
+    const about = $("pro-about");
+    if (about && b.about_copyright) {
+      about.textContent = "AirLLM Studio — " + b.about_copyright;
+    }
+    const devBtn = $("btn-dev-unlock");
+    if (devBtn) {
+      devBtn.hidden = !(b.dev_unlock_available && !b.entitled);
+    }
+    const search = $("use-search");
+    if (search) {
+      const locked = !b.entitled;
+      search.disabled = locked;
+      if (locked) search.checked = false;
+      search.title = locked
+        ? "Web search is a Pro feature — open the Pro tab to unlock."
+        : "Allow a web search for this message only";
     }
     const priv = $("link-privacy");
     const terms = $("link-terms");
@@ -555,6 +578,25 @@
           : "No previous purchases to restore";
       });
     };
+    if ($("btn-dev-unlock")) {
+      $("btn-dev-unlock").onclick = () => {
+        api.call("dev_unlock").then((s) => {
+          applySnap(s);
+          $("status-line").textContent = (s.ok && s.billing && s.billing.entitled)
+            ? "Dev Unlock: Pro enabled"
+            : (s.error || "Dev Unlock unavailable");
+        });
+      };
+    }
+    // Keep Privacy/Terms inside the native window (no target=_blank browser).
+    ["link-privacy", "link-terms"].forEach((id) => {
+      const a = $(id);
+      if (!a) return;
+      a.addEventListener("click", (e) => {
+        // Relative href loads inside pywebview; prevent any host default that leaves the app.
+        e.stopPropagation();
+      });
+    });
     $("sku-grid").addEventListener("click", (e) => {
       const btn = e.target.closest("[data-sku]");
       if (!btn) return;
@@ -565,7 +607,15 @@
           : (s.error || "Purchase failed");
       });
     });
-    $("lib-search").onclick = () => api.call("search_hf", $("lib-q").value.trim());
+    $("lib-search").onclick = async () => {
+      const entitled = !!(state.snap && state.snap.billing && state.snap.billing.entitled);
+      if (!entitled) {
+        $("lib-progress").textContent = "Hugging Face library search is a Pro feature.";
+        showTab("pro");
+        return;
+      }
+      api.call("search_hf", $("lib-q").value.trim());
+    };
     $("lib-add").onclick = () => {
       const q = $("lib-q").value.trim();
       if (q) api.call("add_repo", q).then(applySnap);

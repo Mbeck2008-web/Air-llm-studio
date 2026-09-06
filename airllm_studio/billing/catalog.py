@@ -85,6 +85,14 @@ PAID_UNLOCKS: Tuple[str, ...] = (
 FREE_MAX_TOKENS = 512
 PAID_MAX_TOKENS = 4096
 
+MANAGE_SUBSCRIPTION_COPY = (
+    "Manage or cancel an auto-renewing subscription in "
+    "System Settings → Apple ID → Subscriptions. "
+    "Pro Lifetime does not auto-renew."
+)
+
+ABOUT_COPYRIGHT = "Copyright © 2026 Michael Beck. All rights reserved."
+
 _LEGAL_DIR = Path(__file__).resolve().parents[1] / "web" / "legal"
 
 
@@ -124,4 +132,6 @@ def catalog_dict() -> Dict[str, Any]:
         "terms_url": legal_page_url("terms"),
         "privacy_policy_href": "legal/privacy.html",
         "terms_href": "legal/terms.html",
+        "manage_subscription_copy": MANAGE_SUBSCRIPTION_COPY,
+        "about_copyright": ABOUT_COPYRIGHT,
     }
