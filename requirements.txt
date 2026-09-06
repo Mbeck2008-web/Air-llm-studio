@@ -1,0 +1,28 @@
+# AirLLM Studio — desktop UI (WebKit) + optional classic Tk
+pywebview>=5.0
+# Pin CTk 5.x (legacy AIRLLM_STUDIO_UI=tk)
+customtkinter>=5.2.0,<6
+Pillow>=10.0.0
+huggingface_hub>=0.20.0
+requests>=2.31.0
+duckduckgo-search>=6.0.0
+psutil>=5.9.0
+
+# AirLLM inference stack (Apple Silicon)
+airllm>=3.0
+mlx>=0.20
+torch
+transformers
+accelerate
+safetensors
+sentencepiece
+protobuf
+scipy
+numpy
+bitsandbytes
+
+
+# IMPORTANT (macOS): use a Python with Tk 8.6+, e.g.
+#   brew install python@3.12 python-tk@3.12
+#   /opt/homebrew/bin/python3.12 -m venv .venv
+#   source .venv/bin/activate && pip install -r requirements.txt

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AirLLM Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,480;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <div class="app" id="app">
+    <aside class="rail" id="rail">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <div class="brand-name">AirLLM</div>
+          <div class="brand-sub">Studio</div>
+        </div>
+      </div>
+      <nav class="tabs" id="tabs">
+        <button class="tab on" type="button" data-tab="chat">Chat</button>
+        <button class="tab" type="button" data-tab="input">Input</button>
+        <button class="tab" type="button" data-tab="library">Library</button>
+        <button class="tab" type="button" data-tab="pro">Pro</button>
+      </nav>
+      <div id="rail-chats">
+        <button class="btn-new" id="btn-new" type="button">New conversation</button>
+        <div class="rail-label">Conversations</div>
+        <nav class="chat-list" id="chat-list"></nav>
+      </div>
+    </aside>
+
+    <main class="stage">
+      <header class="top">
+        <div class="filament" id="filament" aria-hidden="true">
+          <span class="fil-core"></span>
+        </div>
+        <span class="hdr-title" id="hdr-title">Chat</span>
+        <label class="model-legacy">
+          <span>Model</span>
+          <select id="model-select">
+            <option value="">No downloaded models</option>
+          </select>
+        </label>
+        <label class="switch" title="Layer / expert streaming">
+          <span class="air-lab">AirLLM</span>
+          <input type="checkbox" id="airllm-toggle" />
+          <span id="air-onoff">On</span>
+        </label>
+        <div class="status" id="status-line">Ready</div>
+      </header>
+
+      <section class="view" id="view-chat">
+        <div class="transcript" id="transcript"></div>
+        <footer class="composer">
+          <div class="composer-card">
+            <textarea id="input" rows="1" placeholder="Write to the model…"></textarea>
+            <div class="composer-bar">
+              <label class="mini-check" title="Allow a web search for this message only">
+                <input type="checkbox" id="use-search" />
+                Search
+              </label>
+              <label class="mini">Temp
+                <input type="number" id="temp" min="0" max="2" step="0.05" value="0.7" />
+              </label>
+              <label class="mini">Tokens
+                <input type="number" id="max-tok" min="16" max="4096" step="16" value="512" />
+              </label>
+              <div class="spacer"></div>
+              <button class="btn-stop" id="btn-stop" type="button" hidden>Stop</button>
+              <button class="btn-send" id="btn-send" type="button">Send</button>
+            </div>
+          </div>
+          <p class="hint" id="hint">Search stays off unless you tick it. Greetings never hit the web.</p>
+        </footer>
+      </section>
+
+      <section class="view" id="view-input" hidden>
+        <div class="input-page">
+          <h2>Input</h2>
+          <p class="lead">System instructions sent with every message. Leave blank for a plain chat.</p>
+          <label class="block-lab">System prompt
+            <textarea id="sys-prompt" rows="10" placeholder="You are a helpful assistant running locally…"></textarea>
+          </label>
+          <label class="block-lab">Scratch / next user message
+            <textarea id="input-draft" rows="8" placeholder="Type here, then Send to the current conversation…"></textarea>
+          </label>
+          <div class="input-actions">
+            <button class="btn-send" type="button" id="btn-save-input">Save prompt</button>
+            <button class="ghost" type="button" id="btn-send-input">Send to chat</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-library" hidden>
+        <div class="input-page lib-page">
+          <h2>Library</h2>
+          <div class="lib-tools">
+            <input id="lib-q" placeholder="Hugging Face repo or search…" />
+            <button class="ghost" id="lib-search" type="button">Search</button>
+            <button class="btn-send" id="lib-add" type="button">Add repo</button>
+          </div>
+          <p class="lib-progress" id="lib-progress"></p>
+          <div class="lib-grid" id="lib-grid"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-pro" hidden>
+        <div class="input-page pro-page">
+          <h2>Pro</h2>
+          <p class="lead" id="pro-status">Local chat stays free. Pro unlocks extras through the App Store.</p>
+          <div class="pro-cols">
+            <div>
+              <h3>Free tier keeps</h3>
+              <ul id="pro-free"></ul>
+            </div>
+            <div>
+              <h3>Payment unlocks</h3>
+              <ul id="pro-paid"></ul>
+            </div>
+          </div>
+          <div class="sku-grid" id="sku-grid"></div>
+          <div class="pro-actions">
+            <button class="ghost" id="btn-restore" type="button">Restore Purchases</button>
+            <a class="legal-link" id="link-privacy" href="legal/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>
+            <a class="legal-link" id="link-terms" href="legal/terms.html" target="_blank" rel="noopener">Terms of Use</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="activity" id="activity">
+      <div class="rail-label">Live path</div>
+      <div class="act-stat">
+        <div class="act-k">Layer</div>
+        <div class="act-v" id="act-layer">— / —</div>
+        <div class="act-sub" id="act-layer-sub">Waiting for generate</div>
+      </div>
+      <div class="act-stat" id="act-expert-wrap">
+        <div class="act-k">Experts</div>
+        <div class="act-v" id="act-experts">— / —</div>
+        <div class="act-sub" id="act-expert-sub">Idle</div>
+      </div>
+      <div class="layer-stack" id="layer-stack"></div>
+      <div id="exp-section">
+        <div class="rail-label" style="margin-top:14px">Experts firing</div>
+        <div class="nrn-grid exp-grid" id="exp-grid"></div>
+      </div>
+      <div class="rail-label" style="margin-top:14px">Neurons firing</div>
+      <canvas id="nrn-canvas" width="256" height="256" aria-label="Neuron activation field"></canvas>
+      <div class="act-hint" id="act-hint">256×256 field = average |activation| of the experts routed this layer.</div>
+
+      <form id="set-form" class="set-form advanced">
+        <div class="rail-label">Advanced</div>
+        <label>Hugging Face token
+          <input type="password" id="set-token" autocomplete="off" />
+        </label>
+        <div class="row">
+          <label>Temp <input type="number" id="set-temp" step="0.05" /></label>
+          <label>Tokens <input type="number" id="set-max" /></label>
+          <label>Top-p <input type="number" id="set-topp" step="0.05" /></label>
+        </div>
+        <label>Compression
+          <select id="set-comp">
+            <option value="">None</option>
+            <option value="8bit">8-bit</option>
+            <option value="4bit">4-bit</option>
+          </select>
+        </label>
+        <label class="mini-check"><input type="checkbox" id="set-tools" /> Enable tools globally</label>
+        <label class="mini-check"><input type="checkbox" id="set-search" /> Enable web search tool</label>
+        <label class="mini-check"><input type="checkbox" id="set-demo" /> Force demo mode</label>
+        <button class="btn-send" type="submit">Save</button>
+      </form>
+    </aside>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

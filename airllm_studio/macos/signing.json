@@ -1,0 +1,6 @@
+{
+  "hardened_runtime": true,
+  "codesign_options": ["runtime"],
+  "bundle_identifier": "ai.airllm.studio",
+  "notes": "Hardened Runtime is enabled via codesign --options runtime. JIT / unsigned-exec / disable-library-validation exceptions are required for CPython + PyTorch/MLX."
+}

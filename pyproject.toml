@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "airllm-studio"
+version = "0.2.0"
+description = "Native macOS desktop app for running large LLMs locally with AirLLM"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "Apache-2.0" }
+authors = [{ name = "AirLLM Studio" }]
+dependencies = [
+  "pywebview>=5.0",
+  "customtkinter>=5.2.0,<6",
+  "Pillow>=10.0.0",
+  "huggingface_hub>=0.20.0",
+  "requests>=2.31.0",
+  "duckduckgo-search>=6.0.0",
+  "psutil>=5.9.0",
+]
+
+[tool.setuptools.package-data]
+airllm_studio = ["web/*", "web/legal/*", "macos/*"]
+
+[project.optional-dependencies]
+airllm = [
+  "airllm",
+  "mlx",
+  "torch",
+  "transformers",
+  "accelerate",
+  "safetensors",
+]
+
+[project.scripts]
+airllm-studio = "airllm_studio.launch:main"
+airllm-studio-dev = "airllm_studio.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["airllm_studio*"]
