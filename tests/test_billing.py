@@ -60,6 +60,7 @@ class TestShippedCatalog(unittest.TestCase):
         self.assertTrue(cat["terms_url"])
 
     def test_legal_pages_and_paywall_markup_exist(self) -> None:
+        cat = catalog_dict()
         privacy = legal_page_path("privacy")
         terms = legal_page_path("terms")
         self.assertTrue(privacy.is_file(), privacy)
@@ -75,8 +76,15 @@ class TestShippedCatalog(unittest.TestCase):
         self.assertIn("legal/privacy.html", html)
         self.assertIn("legal/terms.html", html)
         self.assertIn('data-tab="pro"', html)
+        self.assertIn("Manage or cancel", html)
+        self.assertIn("Michael Beck", html)
+        self.assertIn("btn-dev-unlock", html)
+        self.assertNotIn('target="_blank"', html)
         self.assertIn("purchase", js)
         self.assertIn("restore_purchases", js)
+        self.assertIn("dev_unlock", js)
+        self.assertTrue(cat.get("manage_subscription_copy"))
+        self.assertIn("Michael Beck", cat.get("about_copyright", ""))
 
     def test_license_key_is_not_a_catalog_sku(self) -> None:
         self.assertTrue(looks_like_license_key("ABCD-EFGH-IJKL-MNOP"))
@@ -204,6 +212,47 @@ class TestSessionGateAndFreeChat(unittest.TestCase):
         bought = self.session.purchase("ABCD-EFGH-IJKL-MNOP")
         self.assertFalse(bought.get("ok"))
         self.assertEqual(bought.get("error"), "license_key_refused")
+
+
+
+class TestDevUnlock(unittest.TestCase):
+    def test_dev_unlock_works_outside_release(self) -> None:
+        import os
+
+        from airllm_studio.billing import dev_unlock_available, make_store
+
+        prev = os.environ.pop("AIRLLM_STUDIO_RELEASE", None)
+        try:
+            self.assertTrue(dev_unlock_available())
+            with TemporaryDirectory() as tmp:
+                store = make_store(Path(tmp))
+                receipt = store.dev_unlock()
+                self.assertEqual(receipt.product_id, "ai.airllm.studio.pro.lifetime")
+                self.assertTrue(store.is_entitled())
+        finally:
+            if prev is not None:
+                os.environ["AIRLLM_STUDIO_RELEASE"] = prev
+
+    def test_dev_unlock_blocked_in_release(self) -> None:
+        import os
+
+        from airllm_studio.billing import PurchaseError, make_store
+        from airllm_studio.billing.release import is_release_build
+
+        prev = os.environ.get("AIRLLM_STUDIO_RELEASE")
+        os.environ["AIRLLM_STUDIO_RELEASE"] = "1"
+        try:
+            self.assertTrue(is_release_build())
+            with TemporaryDirectory() as tmp:
+                store = make_store(Path(tmp))
+                with self.assertRaises(PurchaseError):
+                    store.dev_unlock()
+                self.assertFalse(store.is_entitled())
+        finally:
+            if prev is None:
+                os.environ.pop("AIRLLM_STUDIO_RELEASE", None)
+            else:
+                os.environ["AIRLLM_STUDIO_RELEASE"] = prev
 
 
 if __name__ == "__main__":

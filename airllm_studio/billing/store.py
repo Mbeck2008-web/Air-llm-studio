@@ -21,6 +21,7 @@ from airllm_studio.billing.entitlement import (
     entitled_from_receipts,
     refuse_license_key,
 )
+from airllm_studio.billing.release import dev_unlock_available
 
 
 class PurchaseError(Exception):
@@ -143,6 +144,12 @@ class TestStore:
     def is_entitled(self) -> bool:
         return entitled_from_receipts(self.receipts())
 
+    def dev_unlock(self) -> Receipt:
+        """Grant Pro via lifetime SKU for non-Release builds only."""
+        if not dev_unlock_available():
+            raise PurchaseError("Dev Unlock is disabled in Release builds.")
+        return self.purchase("ai.airllm.studio.pro.lifetime")
+
 
 def _try_storekit_purchase(product_id: str) -> Optional[Receipt]:
     """Attempt a live StoreKit purchase. None means use the test store."""
@@ -186,6 +193,11 @@ class StoreKitStore:
     def unlock_with_license_key(self, code: str) -> Receipt:
         refuse_license_key(code)
         raise LicenseKeyRefused("unreachable")
+
+    def dev_unlock(self) -> Receipt:
+        if not dev_unlock_available():
+            raise PurchaseError("Dev Unlock is disabled in Release builds.")
+        return self.fallback.dev_unlock()
 
 
 def make_store(data_dir: Path) -> StoreKitStore:

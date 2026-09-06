@@ -19,6 +19,10 @@ class TestShippedBundleMetadata(unittest.TestCase):
         self.assertTrue(info.get("CFBundleVersion"))
         self.assertEqual(info.get("CFBundleExecutable"), "AirLLMStudio")
         self.assertTrue(info.get("CFBundleName"))
+        copyright_ = str(info.get("NSHumanReadableCopyright") or "")
+        self.assertIn("2026", copyright_)
+        self.assertIn("Michael Beck", copyright_)
+        self.assertIn("All rights reserved", copyright_)
 
     def test_entitlements_declare_sandbox_network_and_files(self) -> None:
         from airllm_studio.bundle import load_entitlements
@@ -127,6 +131,16 @@ class TestAppBundleBuild(unittest.TestCase):
             self.assertIn("PYTHONPATH", launcher)
             sites = built / "Contents" / "Resources" / "site-packages.txt"
             self.assertTrue(sites.is_file())
+            storekit = built / "Contents" / "Resources" / "Products.storekit"
+            self.assertTrue(storekit.is_file())
+            launcher = exe.read_text(encoding="utf-8")
+            self.assertNotIn("AIRLLM_STUDIO_RELEASE=1", launcher)
+            release_dest = Path(tmp) / "Release.app"
+            release_built = build_app(release_dest, release=True)
+            rel_launcher = (release_built / "Contents" / "MacOS" / "AirLLMStudio").read_text(
+                encoding="utf-8"
+            )
+            self.assertIn("AIRLLM_STUDIO_RELEASE=1", rel_launcher)
 
 
 if __name__ == "__main__":

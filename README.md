@@ -31,7 +31,7 @@ python3 scripts/build_macos_app.py
 open "dist/AirLLM Studio.app"
 ```
 
-See [docs/APP_STORE.md](docs/APP_STORE.md) for sandbox entitlements and the remaining App Store Connect / signing steps.
+See [PACKAGING.md](PACKAGING.md) for ad-hoc / Developer ID / Mac App Store signing, and [docs/APP_STORE.md](docs/APP_STORE.md) for Connect / review steps.
 
 Classic CustomTkinter UI (if you need it):
 
@@ -66,4 +66,5 @@ Data: `~/Library/Application Support/AirLLMStudio/`
 
 ## License
 
-App: Apache-2.0. AirLLM and model weights stay under their own licenses.
+App source: Apache-2.0 (`LICENSE`). Copyright © 2026 Michael Beck. All rights reserved.
+Third-party notes: `NOTICE`. AirLLM and model weights stay under their own licenses.

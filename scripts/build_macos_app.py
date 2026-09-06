@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""CLI wrapper: python scripts/build_macos_app.py [dest.app]"""
+"""CLI wrapper: python scripts/build_macos_app.py [--release] [dest.app]"""
 
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -15,8 +16,21 @@ from airllm_studio.packaging import APP_BUNDLE_NAME, build_app  # noqa: E402
 
 
 def main() -> int:
-    dest = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "dist" / APP_BUNDLE_NAME
-    print(build_app(dest))
+    parser = argparse.ArgumentParser(description="Build AirLLM Studio.app")
+    parser.add_argument(
+        "dest",
+        nargs="?",
+        type=Path,
+        default=ROOT / "dist" / APP_BUNDLE_NAME,
+        help="Destination .app path",
+    )
+    parser.add_argument(
+        "--release",
+        action="store_true",
+        help="Export AIRLLM_STUDIO_RELEASE=1 (disables Dev Unlock).",
+    )
+    args = parser.parse_args()
+    print(build_app(args.dest, release=bool(args.release)))
     return 0
 
 

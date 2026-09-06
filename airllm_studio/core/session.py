@@ -268,6 +268,16 @@ class StudioSession:
             return {"ok": False, "error": "license_key_refused", **self.snapshot()}
         return {"ok": False, "error": "license_key_refused", **self.snapshot()}
 
+    def dev_unlock(self) -> Dict[str, Any]:
+        """Unlock Pro via test store. No-op / refused on Release builds."""
+        try:
+            receipt = self.iap.dev_unlock()
+        except PurchaseError as exc:
+            self._emit("error", message=str(exc))
+            return {"ok": False, "error": str(exc), **self.snapshot()}
+        self._emit("status", message="Dev Unlock: Pro enabled")
+        return {"ok": True, "receipt": receipt.to_dict(), **self.snapshot()}
+
     def set_airllm(self, enabled: bool) -> Dict[str, Any]:
         self.cfg = update_config(airllm_enabled=bool(enabled))
         if enabled and self.cfg.demo_mode:

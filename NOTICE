@@ -1,0 +1,21 @@
+AirLLM Studio
+Copyright 2026 Michael Beck
+
+This product includes software developed for local large-model inference
+on Apple Silicon. The application source in this repository is licensed
+under the Apache License, Version 2.0 (see LICENSE).
+
+---------------------------------------------------------------------------
+Third-party components (not relicensed by this NOTICE)
+
+AirLLM, MLX, PyTorch, Transformers, Hugging Face Hub, and any model weights
+you download remain under their own licenses. Bundling or linking does not
+relicense those projects.
+
+pywebview, CustomTkinter, Pillow, duckduckgo-search, requests, psutil, and
+other Python dependencies remain under their respective licenses as shipped
+by their upstream maintainers.
+
+Apple frameworks, App Store / StoreKit terms, and the Mac App Store
+Standard Licensed Application EULA apply when the app is distributed through
+the Mac App Store.
