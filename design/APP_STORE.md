@@ -57,7 +57,7 @@ Pro unlocks: web search / tool calling, higher token limit (4096), Hugging Face 
 
 Unlocks go only through StoreKit (or the documented local test store when StoreKit cannot run). License keys are refused. Restore Purchases re-grants entitlement from prior transactions.
 
-Subscriptions auto-renew until cancelled in System Settings → Apple ID → Subscriptions. The in-app paywall links to bundled Privacy Policy and Terms (`airllm_studio/web/legal/`). Host the same text at a public HTTPS URL on the App Store Connect product page.
+Subscriptions auto-renew until cancelled in System Settings → Apple ID → Subscriptions. The in-app paywall links to bundled Privacy Policy and Terms (`airllm_studio/web/legal/`). Public HTTPS (GitHub Pages, mirrored under `docs/legal/`): https://mbeck2008-web.github.io/Air-llm-studio/legal/privacy.html and https://mbeck2008-web.github.io/Air-llm-studio/legal/terms.html — paste these into App Store Connect.
 
 ## Privacy / review talking points
 

@@ -95,6 +95,9 @@ ABOUT_COPYRIGHT = "Copyright © 2026 Michael Beck. All rights reserved."
 
 _LEGAL_DIR = Path(__file__).resolve().parents[1] / "web" / "legal"
 
+# GitHub Pages (docs/ on main). Same HTML as airllm_studio/web/legal/*.html.
+PUBLIC_LEGAL_BASE = "https://mbeck2008-web.github.io/Air-llm-studio/legal"
+
 
 def get_product(product_id: str) -> Optional[IAPProduct]:
     for product in PRODUCTS:
@@ -108,7 +111,19 @@ def legal_page_path(kind: str) -> Path:
     return _LEGAL_DIR / name
 
 
+def public_legal_url(kind: str) -> str:
+    """Stable HTTPS URL for App Store Connect and About / paywall metadata."""
+    name = "privacy.html" if kind == "privacy" else "terms.html"
+    return f"{PUBLIC_LEGAL_BASE}/{name}"
+
+
 def legal_page_url(kind: str) -> str:
+    """Stable public HTTPS URL (same as public_legal_url). Bundled file:// via legal_page_path()."""
+    return public_legal_url(kind)
+
+
+def legal_page_file_url(kind: str) -> str:
+    """file:// URI for the bundled copy (in-app WebKit fallback)."""
     return legal_page_path(kind).resolve().as_uri()
 
 
@@ -128,8 +143,8 @@ def catalog_dict() -> Dict[str, Any]:
         "free_max_tokens": FREE_MAX_TOKENS,
         "paid_max_tokens": PAID_MAX_TOKENS,
         "has_subscription": has_subscription,
-        "privacy_policy_url": legal_page_url("privacy"),
-        "terms_url": legal_page_url("terms"),
+        "privacy_policy_url": public_legal_url("privacy"),
+        "terms_url": public_legal_url("terms"),
         "privacy_policy_href": "legal/privacy.html",
         "terms_href": "legal/terms.html",
         "manage_subscription_copy": MANAGE_SUBSCRIPTION_COPY,

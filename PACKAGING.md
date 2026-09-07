@@ -74,7 +74,7 @@ until then the launcher uses the Python recorded at build time.
    disabled in customer builds.
 4. Create IAP products matching `airllm_studio/billing/catalog.py` and the
    StoreKit configuration at `airllm_studio/macos/Products.storekit`.
-5. Upload with Transporter / App Store Connect. See [docs/APP_STORE.md](docs/APP_STORE.md).
+5. Upload with Transporter / App Store Connect. See [design/APP_STORE.md](design/APP_STORE.md).
 
 ## Bundle identity
 
@@ -91,3 +91,55 @@ The Pro tab inside the native WebKit window is the paywall. Free tier keeps
 local models/chat (512 token cap). Pro unlocks web search/tools, 4096 tokens,
 and Hugging Face library search. Purchases use StoreKit when available;
 otherwise the documented file-backed test store under Application Support.
+
+## In-App Purchase catalog
+
+Create the same products in App Store Connect (and in Xcode StoreKit Testing):
+
+| Product ID | Type | USD | Notes |
+|------------|------|-----|-------|
+| `ai.airllm.studio.pro.monthly` | Auto-renewable | $7.99 | Month |
+| `ai.airllm.studio.pro.yearly` | Auto-renewable | $49.99 | Year |
+| `ai.airllm.studio.pro.lifetime` | Non-consumable | $59.99 | One-time |
+
+Source of truth: `airllm_studio/billing/catalog.py` and
+`airllm_studio/macos/Products.storekit`.
+
+### Restore Purchases
+
+The Pro tab **Restore Purchases** button calls StoreKit restore when available;
+otherwise it re-activates prior transactions from the file-backed TestStore under
+`~/Library/Application Support/AirLLMStudio/iap/transactions.json`. Release /
+`--release` builds disable **Dev Unlock Pro** only — Free chat and StoreKit /
+TestStore purchase + restore still work.
+
+### Release builds
+
+```bash
+python3 scripts/build_macos_app.py --release
+```
+
+Exports `AIRLLM_STUDIO_RELEASE=1` in the launcher so Dev Unlock is hidden and
+refused. Use StoreKit Testing (Products.storekit) or a sandbox Apple ID for Pro.
+
+## Public Privacy / Terms (HTTPS)
+
+GitHub Pages serves the same HTML as `airllm_studio/web/legal/`:
+
+| Page | Public URL |
+|------|------------|
+| Privacy | https://mbeck2008-web.github.io/Air-llm-studio/legal/privacy.html |
+| Terms | https://mbeck2008-web.github.io/Air-llm-studio/legal/terms.html |
+
+Mirrored under `docs/legal/` (Pages source = `/docs` on `main`). In-app Pro /
+About still opens the bundled relative copies; the paywall About line shows these
+HTTPS URLs for App Store Connect.
+
+## Leftover Apple steps (Michael — not code blockers)
+
+1. Paid Apple Developer Program team; Mac App Distribution cert + profile for `ai.airllm.studio`.
+2. App Store Connect: product page, privacy nutrition label, IAP products (IDs above), screenshots, review notes.
+3. Re-sign nested Python/dylibs; upload via Transporter; sandbox QA of a signed MAS build.
+4. Paste the public Privacy/Terms HTTPS URLs into the Connect listing.
+5. Optional later: embed relocatable CPython (out of B1 scope).
+

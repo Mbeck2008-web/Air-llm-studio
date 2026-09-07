@@ -10,12 +10,14 @@ from tempfile import TemporaryDirectory
 from airllm_studio.billing import (
     LicenseKeyRefused,
     PRODUCTS,
+    PUBLIC_LEGAL_BASE,
     PurchaseError,
     allows,
     catalog_dict,
     entitled_from_receipts,
     legal_page_path,
     make_store,
+    public_legal_url,
 )
 from airllm_studio.billing.store import looks_like_license_key
 from airllm_studio.core.config import AppConfig
@@ -56,8 +58,14 @@ class TestShippedCatalog(unittest.TestCase):
         self.assertTrue(cat["free_tier"])
         self.assertTrue(cat["paid_unlocks"])
         self.assertTrue(cat["has_subscription"])
-        self.assertTrue(cat["privacy_policy_url"])
-        self.assertTrue(cat["terms_url"])
+        self.assertTrue(cat["privacy_policy_url"].startswith("https://"))
+        self.assertTrue(cat["terms_url"].startswith("https://"))
+        self.assertEqual(cat["privacy_policy_url"], public_legal_url("privacy"))
+        self.assertEqual(cat["terms_url"], public_legal_url("terms"))
+        by_id = {p.product_id: p for p in PRODUCTS}
+        self.assertEqual(by_id["ai.airllm.studio.pro.monthly"].usd, 7.99)
+        self.assertEqual(by_id["ai.airllm.studio.pro.yearly"].usd, 49.99)
+        self.assertEqual(by_id["ai.airllm.studio.pro.lifetime"].usd, 59.99)
 
     def test_legal_pages_and_paywall_markup_exist(self) -> None:
         cat = catalog_dict()
@@ -80,6 +88,15 @@ class TestShippedCatalog(unittest.TestCase):
         self.assertIn("Michael Beck", html)
         self.assertIn("btn-dev-unlock", html)
         self.assertNotIn('target="_blank"', html)
+        self.assertIn("privacy_policy_href", js)
+        self.assertNotIn('setAttribute("title", b.privacy_policy_url)', js)
+        self.assertNotIn('setAttribute("title", b.terms_url)', js)
+        root = Path(__file__).resolve().parents[1]
+        for name in ("privacy.html", "terms.html"):
+            bundled = (root / "airllm_studio" / "web" / "legal" / name).read_text(encoding="utf-8")
+            pages = (root / "docs" / "legal" / name).read_text(encoding="utf-8")
+            self.assertEqual(bundled, pages, f"docs/legal/{name} must mirror web/legal")
+        self.assertIn("mbeck2008-web.github.io/Air-llm-studio/legal", PUBLIC_LEGAL_BASE)
         self.assertIn("purchase", js)
         self.assertIn("restore_purchases", js)
         self.assertIn("dev_unlock", js)
@@ -214,7 +231,6 @@ class TestSessionGateAndFreeChat(unittest.TestCase):
         self.assertEqual(bought.get("error"), "license_key_refused")
 
 
-
 class TestDevUnlock(unittest.TestCase):
     def test_dev_unlock_works_outside_release(self) -> None:
         import os
@@ -248,6 +264,37 @@ class TestDevUnlock(unittest.TestCase):
                 with self.assertRaises(PurchaseError):
                     store.dev_unlock()
                 self.assertFalse(store.is_entitled())
+        finally:
+            if prev is None:
+                os.environ.pop("AIRLLM_STUDIO_RELEASE", None)
+            else:
+                os.environ["AIRLLM_STUDIO_RELEASE"] = prev
+
+
+class TestReleaseKeepsStoreKitPath(unittest.TestCase):
+    def test_purchase_and_restore_work_when_release_kills_dev_unlock(self) -> None:
+        import os
+
+        from airllm_studio.billing import PurchaseError, make_store
+        from airllm_studio.billing.release import is_release_build
+
+        prev = os.environ.get("AIRLLM_STUDIO_RELEASE")
+        os.environ["AIRLLM_STUDIO_RELEASE"] = "1"
+        try:
+            self.assertTrue(is_release_build())
+            with TemporaryDirectory() as tmp:
+                store = make_store(Path(tmp))
+                with self.assertRaises(PurchaseError):
+                    store.dev_unlock()
+                sku = "ai.airllm.studio.pro.monthly"
+                receipt = store.purchase(sku)
+                self.assertEqual(receipt.product_id, sku)
+                self.assertTrue(store.is_entitled())
+                store.clear_entitlement()
+                self.assertFalse(store.is_entitled())
+                restored = store.restore()
+                self.assertTrue(restored)
+                self.assertTrue(store.is_entitled())
         finally:
             if prev is None:
                 os.environ.pop("AIRLLM_STUDIO_RELEASE", None)

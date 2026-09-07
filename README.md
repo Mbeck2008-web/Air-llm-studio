@@ -31,7 +31,7 @@ python3 scripts/build_macos_app.py
 open "dist/AirLLM Studio.app"
 ```
 
-See [PACKAGING.md](PACKAGING.md) for ad-hoc / Developer ID / Mac App Store signing, and [docs/APP_STORE.md](docs/APP_STORE.md) for Connect / review steps.
+See [PACKAGING.md](PACKAGING.md) for ad-hoc / Developer ID / Mac App Store signing, and [design/APP_STORE.md](design/APP_STORE.md) for Connect / review steps.
 
 Classic CustomTkinter UI (if you need it):
 
@@ -63,6 +63,19 @@ Data: `~/Library/Application Support/AirLLMStudio/`
 - Dense models use AirLLM’s MLX path. MoE models use per-expert streaming (safetensors).
 - First prepare is slow and disk-heavy. Chat after that streams only the active layer / routed experts.
 - Set a Hugging Face token in Settings for gated models.
+
+## Free / Pro
+
+Local chat stays free. Pro (web search/tools, higher token limit, HF library search)
+unlocks via App Store IAP — monthly `$7.99`, yearly `$49.99`, lifetime `$59.99`.
+Use **Restore Purchases** on the Pro tab after reinstall. Release builds
+(`python3 scripts/build_macos_app.py --release`) hide Dev Unlock; StoreKit Testing
++ TestStore still exercise Free/Pro.
+
+## Privacy / Terms
+
+- In-app: Pro tab links (bundled `airllm_studio/web/legal/`).
+- Public HTTPS (GitHub Pages): [Privacy](https://mbeck2008-web.github.io/Air-llm-studio/legal/privacy.html) · [Terms](https://mbeck2008-web.github.io/Air-llm-studio/legal/terms.html)
 
 ## License
 

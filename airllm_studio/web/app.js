@@ -262,6 +262,7 @@
     }
     const priv = $("link-privacy");
     const terms = $("link-terms");
+    // In-app WebKit uses bundled relative hrefs (public HTTPS stays in catalog for Connect).
     if (priv && b.privacy_policy_href) priv.setAttribute("href", b.privacy_policy_href);
     if (terms && b.terms_href) terms.setAttribute("href", b.terms_href);
     if (priv) priv.hidden = !b.has_subscription && !b.privacy_policy_href;
