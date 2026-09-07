@@ -10,7 +10,7 @@
 ### Public legal
 
 - GitHub Pages from `docs/legal/*.html` (mirrors `airllm_studio/web/legal/`).
-- Stable HTTPS in `catalog_dict` + README / PACKAGING / APP_STORE for Connect paste (not painted into the Pro tab).
+- Stable HTTPS in `catalog_dict` + README / PACKAGING / `design/APP_STORE.md` for Connect paste (not painted into the Pro tab).
 - Design notes moved off Pages source: `docs/superpowers/` → `design/superpowers/`.
 - Privacy/Terms “Last updated” set to 7 September 2026 (bundled + Pages mirrors stay equal).
 
