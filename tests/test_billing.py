@@ -88,7 +88,9 @@ class TestShippedCatalog(unittest.TestCase):
         self.assertIn("Michael Beck", html)
         self.assertIn("btn-dev-unlock", html)
         self.assertNotIn('target="_blank"', html)
-        self.assertIn("privacy_policy_url", js)
+        self.assertIn("privacy_policy_href", js)
+        self.assertNotIn('setAttribute("title", b.privacy_policy_url)', js)
+        self.assertNotIn('setAttribute("title", b.terms_url)', js)
         root = Path(__file__).resolve().parents[1]
         for name in ("privacy.html", "terms.html"):
             bundled = (root / "airllm_studio" / "web" / "legal" / name).read_text(encoding="utf-8")

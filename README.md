@@ -31,7 +31,7 @@ python3 scripts/build_macos_app.py
 open "dist/AirLLM Studio.app"
 ```
 
-See [PACKAGING.md](PACKAGING.md) for ad-hoc / Developer ID / Mac App Store signing, and [docs/APP_STORE.md](docs/APP_STORE.md) for Connect / review steps.
+See [PACKAGING.md](PACKAGING.md) for ad-hoc / Developer ID / Mac App Store signing, and [design/APP_STORE.md](design/APP_STORE.md) for Connect / review steps.
 
 Classic CustomTkinter UI (if you need it):
 

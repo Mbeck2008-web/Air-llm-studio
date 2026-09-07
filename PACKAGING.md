@@ -74,7 +74,7 @@ until then the launcher uses the Python recorded at build time.
    disabled in customer builds.
 4. Create IAP products matching `airllm_studio/billing/catalog.py` and the
    StoreKit configuration at `airllm_studio/macos/Products.storekit`.
-5. Upload with Transporter / App Store Connect. See [docs/APP_STORE.md](docs/APP_STORE.md).
+5. Upload with Transporter / App Store Connect. See [design/APP_STORE.md](design/APP_STORE.md).
 
 ## Bundle identity
 
