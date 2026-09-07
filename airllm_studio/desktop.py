@@ -104,8 +104,12 @@ class Bridge:
         return self.s.dev_unlock()
 
     def open_legal(self, kind: str) -> dict:
-        """Return a file:// URL for in-app navigation (no external browser)."""
-        from airllm_studio.billing import legal_page_path, legal_page_url
+        """Return bundled href + public HTTPS URL (in-app uses relative href)."""
+        from airllm_studio.billing import (
+            legal_page_file_url,
+            legal_page_path,
+            public_legal_url,
+        )
 
         which = "privacy" if kind == "privacy" else "terms"
         path = legal_page_path(which)
@@ -114,7 +118,8 @@ class Bridge:
         return {
             "ok": True,
             "href": f"legal/{'privacy' if which == 'privacy' else 'terms'}.html",
-            "url": legal_page_url(which),
+            "url": public_legal_url(which),
+            "file_url": legal_page_file_url(which),
         }
 
 

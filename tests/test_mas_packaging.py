@@ -143,5 +143,37 @@ class TestAppBundleBuild(unittest.TestCase):
             self.assertIn("AIRLLM_STUDIO_RELEASE=1", rel_launcher)
 
 
+
+class TestStoreKitConfigMatchesCatalog(unittest.TestCase):
+    def test_products_storekit_ids_and_prices(self) -> None:
+        import json
+
+        from airllm_studio.billing.catalog import PRODUCTS
+
+        root = Path(__file__).resolve().parents[1]
+        storekit = root / "airllm_studio" / "macos" / "Products.storekit"
+        self.assertTrue(storekit.is_file(), storekit)
+        data = json.loads(storekit.read_text(encoding="utf-8"))
+        found: dict[str, str] = {}
+        for product in data.get("products") or []:
+            found[str(product["productID"])] = str(product["displayPrice"])
+        for group in data.get("subscriptionGroups") or []:
+            for sub in group.get("subscriptions") or []:
+                found[str(sub["productID"])] = str(sub["displayPrice"])
+        expected = {
+            "ai.airllm.studio.pro.monthly": "7.99",
+            "ai.airllm.studio.pro.yearly": "49.99",
+            "ai.airllm.studio.pro.lifetime": "59.99",
+        }
+        for pid, price in expected.items():
+            self.assertIn(pid, found)
+            self.assertEqual(found[pid], price)
+        catalog_ids = {p.product_id for p in PRODUCTS}
+        self.assertEqual(set(expected), catalog_ids)
+        for product in PRODUCTS:
+            self.assertEqual(found[product.product_id], f"{product.usd:.2f}")
+
+
+
 if __name__ == "__main__":
     unittest.main()

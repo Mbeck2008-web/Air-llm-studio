@@ -64,6 +64,19 @@ Data: `~/Library/Application Support/AirLLMStudio/`
 - First prepare is slow and disk-heavy. Chat after that streams only the active layer / routed experts.
 - Set a Hugging Face token in Settings for gated models.
 
+## Free / Pro
+
+Local chat stays free. Pro (web search/tools, higher token limit, HF library search)
+unlocks via App Store IAP — monthly `$7.99`, yearly `$49.99`, lifetime `$59.99`.
+Use **Restore Purchases** on the Pro tab after reinstall. Release builds
+(`python3 scripts/build_macos_app.py --release`) hide Dev Unlock; StoreKit Testing
++ TestStore still exercise Free/Pro.
+
+## Privacy / Terms
+
+- In-app: Pro tab links (bundled `airllm_studio/web/legal/`).
+- Public HTTPS (GitHub Pages): [Privacy](https://mbeck2008-web.github.io/Air-llm-studio/legal/privacy.html) · [Terms](https://mbeck2008-web.github.io/Air-llm-studio/legal/terms.html)
+
 ## License
 
 App source: Apache-2.0 (`LICENSE`). Copyright © 2026 Michael Beck. All rights reserved.

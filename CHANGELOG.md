@@ -1,5 +1,27 @@
 # Changelog
 
+## Unreleased — B1 release / StoreKit / legal HTTPS
+
+### Release path
+
+- `python3 scripts/build_macos_app.py --release` / `AIRLLM_STUDIO_RELEASE=1` disables Dev Unlock.
+- Free tier + Pro purchase/restore still work via StoreKit Testing + TestStore.
+
+### Public legal
+
+- GitHub Pages from `docs/legal/*.html` (mirrors `airllm_studio/web/legal/`).
+- Stable HTTPS wired into catalog / Pro About + README / PACKAGING / APP_STORE.
+
+### StoreKit catalog
+
+- Confirmed IDs/prices: `ai.airllm.studio.pro.monthly` $7.99, `.yearly` $49.99, `.lifetime` $59.99.
+- Restore Purchases documented for StoreKit + TestStore.
+
+### Leftover Apple steps (Michael — not code blockers)
+
+- Certs, ASC product page, IAP creation, screenshots, Transporter upload, sandbox QA.
+- Paste public Privacy/Terms HTTPS into Connect.
+
 ## Unreleased — packaging, paywall, IP
 
 ### Packaged
@@ -34,6 +56,6 @@
 - Paid Apple Developer Program team, Mac App Distribution cert + profile.
 - Re-sign nested Python/dylibs; App Store Connect product page, privacy
   nutrition label, IAP products, screenshots, review notes.
-- Sandbox QA of a fully signed MAS build; host public HTTPS Privacy/Terms URLs
-  on the Connect listing.
+- Sandbox QA of a fully signed MAS build; paste public Privacy/Terms HTTPS
+  URLs (GitHub Pages) into the Connect listing.
 - Optional: embed relocatable CPython under `Contents/Resources/python/`.
