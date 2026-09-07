@@ -10,7 +10,9 @@
 ### Public legal
 
 - GitHub Pages from `docs/legal/*.html` (mirrors `airllm_studio/web/legal/`).
-- Stable HTTPS wired into catalog / Pro About + README / PACKAGING / APP_STORE.
+- Stable HTTPS in `catalog_dict` + README / PACKAGING / APP_STORE for Connect paste (not painted into the Pro tab).
+- Design notes moved off Pages source: `docs/superpowers/` → `design/superpowers/`.
+- Privacy/Terms “Last updated” set to 7 September 2026 (bundled + Pages mirrors stay equal).
 
 ### StoreKit catalog
 
@@ -21,6 +23,7 @@
 
 - Certs, ASC product page, IAP creation, screenshots, Transporter upload, sandbox QA.
 - Paste public Privacy/Terms HTTPS into Connect.
+- **Confirm `support@airllm.ai` mailbox** (used in Privacy/Terms contact lines) — do not invent a substitute email until confirmed.
 
 ## Unreleased — packaging, paywall, IP
 

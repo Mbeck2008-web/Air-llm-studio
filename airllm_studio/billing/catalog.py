@@ -118,7 +118,7 @@ def public_legal_url(kind: str) -> str:
 
 
 def legal_page_url(kind: str) -> str:
-    """Prefer public HTTPS; bundled file:// remains available via legal_page_path()."""
+    """Stable public HTTPS URL (same as public_legal_url). Bundled file:// via legal_page_path()."""
     return public_legal_url(kind)
 
 

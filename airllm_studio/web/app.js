@@ -247,18 +247,6 @@
     if (about && b.about_copyright) {
       about.textContent = "AirLLM Studio — " + b.about_copyright;
     }
-    const publicLegal = $("pro-public-legal");
-    if (publicLegal) {
-      const priv = b.privacy_policy_url || "";
-      const terms = b.terms_url || "";
-      if (priv && terms) {
-        // Plain text so ASC / reviewers see stable HTTPS without leaving the app.
-        publicLegal.textContent = "Public HTTPS — Privacy: " + priv + " | Terms: " + terms;
-        publicLegal.hidden = false;
-      } else {
-        publicLegal.hidden = true;
-      }
-    }
     const devBtn = $("btn-dev-unlock");
     if (devBtn) {
       devBtn.hidden = !(b.dev_unlock_available && !b.entitled);

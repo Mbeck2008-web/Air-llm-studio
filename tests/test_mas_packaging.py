@@ -143,7 +143,6 @@ class TestAppBundleBuild(unittest.TestCase):
             self.assertIn("AIRLLM_STUDIO_RELEASE=1", rel_launcher)
 
 
-
 class TestStoreKitConfigMatchesCatalog(unittest.TestCase):
     def test_products_storekit_ids_and_prices(self) -> None:
         import json
@@ -172,7 +171,6 @@ class TestStoreKitConfigMatchesCatalog(unittest.TestCase):
         self.assertEqual(set(expected), catalog_ids)
         for product in PRODUCTS:
             self.assertEqual(found[product.product_id], f"{product.usd:.2f}")
-
 
 
 if __name__ == "__main__":

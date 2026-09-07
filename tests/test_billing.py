@@ -83,7 +83,6 @@ class TestShippedCatalog(unittest.TestCase):
         self.assertIn("Restore Purchases", html)
         self.assertIn("legal/privacy.html", html)
         self.assertIn("legal/terms.html", html)
-        self.assertIn("pro-public-legal", html)
         self.assertIn('data-tab="pro"', html)
         self.assertIn("Manage or cancel", html)
         self.assertIn("Michael Beck", html)
@@ -230,7 +229,6 @@ class TestSessionGateAndFreeChat(unittest.TestCase):
         self.assertEqual(bought.get("error"), "license_key_refused")
 
 
-
 class TestDevUnlock(unittest.TestCase):
     def test_dev_unlock_works_outside_release(self) -> None:
         import os
@@ -271,7 +269,6 @@ class TestDevUnlock(unittest.TestCase):
                 os.environ["AIRLLM_STUDIO_RELEASE"] = prev
 
 
-
 class TestReleaseKeepsStoreKitPath(unittest.TestCase):
     def test_purchase_and_restore_work_when_release_kills_dev_unlock(self) -> None:
         import os
@@ -301,7 +298,6 @@ class TestReleaseKeepsStoreKitPath(unittest.TestCase):
                 os.environ.pop("AIRLLM_STUDIO_RELEASE", None)
             else:
                 os.environ["AIRLLM_STUDIO_RELEASE"] = prev
-
 
 
 if __name__ == "__main__":
